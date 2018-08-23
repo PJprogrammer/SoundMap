@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GSF</string>
+    <string name="get_location">Get Location</string>
+    <string name="cooardinates">Cooardinates:</string>
+    <string name="coordinates_lattitude_longitude">Coordinates(Lattitude/Longitude)</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
