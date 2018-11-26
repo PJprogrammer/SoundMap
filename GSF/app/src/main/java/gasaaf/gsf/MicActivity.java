@@ -1,8 +1,8 @@
-package chenz.gsf;
+package gasaaf.gsf;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -13,11 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.security.Permission;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static java.lang.Thread.sleep;
 
@@ -30,21 +25,31 @@ public class MicActivity extends AppCompatActivity {
     CheckTh cT;
     TextView Display;
     volatile Boolean toExit;
+    public Boolean isDanger;
     final int REQUEST_PERMISSION_CODE = 1000;
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mic);
-        buttonStart = (Button) findViewById(R.id.buttonStart);
-        buttonStop = (Button) findViewById(R.id.buttonStop);
+        buttonStart = (Button) findViewById(R.id.button6);
+        buttonStop = (Button) findViewById(R.id.button6);
         showAmp = (Button) findViewById(R.id.button6);
         Display = (TextView) findViewById(R.id.textView2);
+        isDanger = false;
         requestRecordAudioPermission();
         mediaRecorder = new MediaRecorder();
         Display.setText("Little Bo Beep");
         sm = new SoundMeter();
         toExit = false;
+
+
+
         final Thread t = new Thread(new Runnable() {
 
             @Override
@@ -53,7 +58,10 @@ public class MicActivity extends AppCompatActivity {
                 while(!toExit){
 
                     try {
-                        if (sm.getAmplitude() > 35) {
+                        if (sm.getAmplitude() > 40) {
+
+
+                            isDanger = true;
                             counter++;
                             final int finalCounter = counter;
                             runOnUiThread(new Runnable() {
@@ -63,15 +71,14 @@ public class MicActivity extends AppCompatActivity {
                                 }
                             });
                         }
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    isDanger = false;
                 }
             }
         });
-
-
 
         buttonStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +108,7 @@ public class MicActivity extends AppCompatActivity {
             public void onClick(View view) {
                 sm.stop();
                 toExit = true;
-                cT.interrupt();
+
 
 
                 Toast.makeText(getApplicationContext(), "Recording ended", Toast.LENGTH_LONG).show();
@@ -163,6 +170,20 @@ public class MicActivity extends AppCompatActivity {
         }
     }
 
+
+
+    public void startService(View view)
+    {
+        Intent intent = new Intent(this,MicService.class);
+        startService(intent);
+    }
+
+
+    public void stopService(View view)
+    {
+        Intent intent = new Intent(this,MicService.class);
+        stopService(intent);
+    }
 
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="chenz.gsf">
+    package="gasaaf.gsf">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -41,7 +41,18 @@
             android:name="com.google.android.maps"
             android:required="true" />
 
-        <activity android:name=".MicActivity"></activity>
+        <activity android:name=".MicActivity">
+
+
+            
+
+
+        </activity>
+
+        <service
+            android:name=".MicService"
+            android:exported="false" />
+        <service android:name=".MicServiceTheSequel" />
     </application>
 
 </manifest>

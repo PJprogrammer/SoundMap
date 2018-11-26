@@ -1,8 +1,9 @@
-package chenz.gsf;
+package gasaaf.gsf;
 
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,10 +16,14 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -32,6 +37,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker marker;
     private LocationManager locationManager;
 
+    private Intent serviceIntent;
+    Button startService;
+    Button stopService;
+    Button bindService;
+    Button unbindService;
+
+
+    private MicServiceTheSequel MSTS;
+    private boolean isServiceBound;
+    private ServiceConnection serviceConnection;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +57,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mo = new MarkerOptions().position(new LatLng(0, 0)).title("My Current Location");
+        mo = new MarkerOptions().position(new LatLng(0, 0)).title("My Current Location").icon(BitmapDescriptorFactory.fromResource(R.drawable.badnews));
         if (Build.VERSION.SDK_INT >= 23 && !isPermissionGranted()) {
             requestPermissions(PERMISSIONS, PERMISSION_ALL);
         } else requestLocation();
         if (!isLocationEnabled())
             showAlert(1);
+
+
+        serviceIntent = new Intent(getApplicationContext(), MicServiceTheSequel.class);
+
+
+        startService = (Button)findViewById(R.id.startS);
+        startService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startService(serviceIntent);
+            }
+        });
+
+        stopService = (Button) findViewById(R.id.stopS);
+        stopService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopService(serviceIntent);
+            }
+        });
+
+
+
+
+
+
+
+
+
+
     }
 
     @Override
@@ -56,9 +103,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
-        LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
-        marker.setPosition(myCoordinates);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(myCoordinates));
+
+
+            LatLng myCoordinates = new LatLng(location.getLatitude(), location.getLongitude());
+            marker.setPosition(myCoordinates);
+            mMap.animateCamera(CameraUpdateFactory.newLatLng(myCoordinates));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCoordinates, 25));
+
     }
 
     @Override
@@ -76,8 +127,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
     private void requestLocation() {
-        locationManager.requestLocationUpdates("gps", 10000, 0, this);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, this);
+        locationManager.requestLocationUpdates("gps", 5000, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, this);
     }
     private boolean isLocationEnabled() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||

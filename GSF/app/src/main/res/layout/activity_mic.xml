@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MicActivity">
+    tools:context=".MicActivity"
+    tools:ignore="ExtraText">
 
     <Button
         android:id="@+id/buttonStart"
@@ -13,18 +14,22 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="157dp"
-        android:text="Start Recording"
+        android:text="Start Service "
+        android:onClick="startService"
         tools:layout_editor_absoluteX="118dp"
-        tools:layout_editor_absoluteY="150dp" />
+        tools:layout_editor_absoluteY="150dp"
+         />
 
     <Button
         android:id="@+id/buttonStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Stop Recording"
+        android:text="End Service"
+        android:onClick="stopService"
         tools:layout_editor_absoluteX="122dp"
-        tools:layout_editor_absoluteY="281dp" />
+        tools:layout_editor_absoluteY="281dp"
+        />
 
     <Button
         android:id="@+id/button6"
