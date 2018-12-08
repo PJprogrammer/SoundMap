@@ -1,6 +1,8 @@
 package gasaaf.gsf;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -9,7 +11,9 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Build;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
@@ -18,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,11 +47,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button stopService;
     Button bindService;
     Button unbindService;
+    Button update;
 
 
     private MicServiceTheSequel MSTS;
     private boolean isServiceBound;
     private ServiceConnection serviceConnection;
+
+    private TextView dis;
 
 
     @Override
@@ -64,7 +72,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (!isLocationEnabled())
             showAlert(1);
 
-
+        dis = (TextView) findViewById(R.id.textView3);
         serviceIntent = new Intent(getApplicationContext(), MicServiceTheSequel.class);
 
 
@@ -84,11 +92,61 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        bindService = (Button) findViewById(R.id.button7);
+        bindService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                Log.i("Great","Button Bind Clicked");
+                if(serviceConnection == null)
+                {
+                    Log.i("Great","Service Connection is Null");
+                    serviceConnection = new ServiceConnection() {
+                        @Override
+                        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                            MicServiceTheSequel.MicServiceTheSequelBinder myBinder = (MicServiceTheSequel.MicServiceTheSequelBinder)iBinder;
+                            MSTS = myBinder.getService();
+                            isServiceBound = true;
+                            Log.i("Yes", "Service Connected");
+                        }
 
+                        @Override
+                        public void onServiceDisconnected(ComponentName componentName) {
+                            isServiceBound = false;
+                            Log.i("No", "Service DisConnected");
+                        }
+                    };
+                }
 
+                bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+            }
+            });
 
+        unbindService = (Button) findViewById(R.id.button8);
+        unbindService.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isServiceBound)
+                {
+                    unbindService(serviceConnection);
+                    isServiceBound = false;
+                    Log.i("No", "Service DisConnected");
+                }
+            }
+        });
 
-
+        update = (Button) findViewById(R.id.Update);
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isServiceBound) {
+                    dis.setText("Dsnger" + MSTS.getNumber());
+                }
+                else{
+                    dis.setText("Service Not bound");
+                }
+            }
+        });
 
 
 
