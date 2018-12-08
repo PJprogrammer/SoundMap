@@ -47,15 +47,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/startS"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:text="Bind Service" />
 
     <Button
         android:id="@+id/button8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/stopS"
         android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/button4"
+        android:layout_toRightOf="@+id/button4"
         android:text="Unbind Service" />
 
     <Button
@@ -65,6 +67,15 @@
         android:layout_alignEnd="@+id/textView3"
         android:layout_below="@+id/map"
         android:text="Update" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/Update"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/Update"
+        android:text="SaveLocation" />
 
 
 </RelativeLayout>

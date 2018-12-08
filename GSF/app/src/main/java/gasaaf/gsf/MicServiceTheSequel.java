@@ -18,6 +18,9 @@ public class MicServiceTheSequel extends Service{
     boolean isDanger = false;
     int counter;
 
+    boolean updateLocation;
+
+
     class MicServiceTheSequelBinder extends Binder {
         public MicServiceTheSequel getService()
         {
@@ -64,6 +67,7 @@ public class MicServiceTheSequel extends Service{
 
     private void startThreatDetection()
     {
+        updateLocation = false;
         Log.i("Yes", "Starting Threat Detection");
         counter = 0;
         while(!toExit){
@@ -71,7 +75,7 @@ public class MicServiceTheSequel extends Service{
             try {
                 if (sMs.getAmplitude() > 40) {
 
-
+                    updateLocation = true;
                     isDanger = true;
                     counter++;
 

@@ -7,6 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -28,6 +31,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -48,13 +52,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button bindService;
     Button unbindService;
     Button update;
+    Button savLacks;
 
-
-    private MicServiceTheSequel MSTS;
+    public MicServiceTheSequel MSTS;
     private boolean isServiceBound;
     private ServiceConnection serviceConnection;
 
     private TextView dis;
+
 
 
     @Override
@@ -140,13 +145,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 if(isServiceBound) {
-                    dis.setText("Dsnger" + MSTS.getNumber());
+                    dis.setText("Danger" + MSTS.getNumber());
                 }
                 else{
                     dis.setText("Service Not bound");
                 }
             }
         });
+
+        savLacks = (Button) findViewById(R.id.button4);
+        savLacks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                savLac();
+            }
+        });
+
 
 
 
@@ -167,6 +181,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             marker.setPosition(myCoordinates);
             mMap.animateCamera(CameraUpdateFactory.newLatLng(myCoordinates));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myCoordinates, 25));
+
 
     }
 
@@ -240,4 +255,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 });
         dialog.show();
     }
+
+    public void savLac()
+    {
+        if(serviceConnection != null) {
+            Log.i("Yes", "Pass 1");
+            Thread saveLocation = new Thread() {
+                int counterShot = MSTS.getNumber();
+
+                public void run() {
+                    try {
+                        sleep(1500);
+                        Log.i("Yes", "Pass3 ");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (MSTS.getNumber() > counterShot) {
+                        Log.i("Yes", "Pass2");
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                int height = 80;
+                                int width = 60;
+                                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.dz123);
+                                Bitmap b=bitmapdraw.getBitmap();
+                                Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+
+
+
+                                Location location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+                                MarkerOptions mo2 = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()));
+                                Marker threat = mMap.addMarker(mo2);
+                                threat.setIcon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                            }
+                        });
+
+
+                        counterShot = MSTS.getNumber();
+                    }
+
+
+
+                }
+            };
+            saveLocation.start();
+
+        }
+    }
+
+
 }
+
